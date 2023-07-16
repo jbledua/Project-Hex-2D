@@ -10,11 +10,11 @@ public class MaskToTile : MonoBehaviour
     public GameObject maskDisplay;
 
     public Tilemap tilemap;
+
     public Tile layerTile;
     //public Tile groundTile;
     public int desiredNumberOfTiles = 50;  // Set this to the number of tiles you want along each axis
 
-    // Start is called before the first frame update
     void Start()
     {
         // Get the Sprite Renderer from the GameObject
@@ -26,9 +26,15 @@ public class MaskToTile : MonoBehaviour
         // Assign the Sprite to the Sprite Renderer
         spriteRenderer.sprite = sprite;
 
-        int squareSize = image.width / desiredNumberOfTiles;
+        int squareSize = Mathf.FloorToInt((float)image.width / desiredNumberOfTiles);
         int numberOfTiles = desiredNumberOfTiles;  // Calculate the number of tiles along each axis
 
+        // Calculate the scale factor based on the desired size and original image size
+        float scaleFactor = 1f / (float)squareSize; // Inverse of squareSize to convert from pixels to Unity units
+
+        // Calculate the size of the maskDisplay based on the desired number of tiles and scale factor
+        Vector3 maskDisplaySize = new Vector3(numberOfTiles * scaleFactor, numberOfTiles * scaleFactor, 1f);
+        maskDisplay.transform.localScale = maskDisplaySize;
 
         for (int y = 0; y < image.height; y += squareSize)
         {
@@ -57,14 +63,10 @@ public class MaskToTile : MonoBehaviour
 
                 if (mostCommonColor == Color.white)
                 {
-                    tilemap.SetTile(new Vector3Int(x / squareSize - numberOfTiles / 2, y / squareSize - numberOfTiles / 2, 0), layerTile);
+                    tilemap.SetTile(new Vector3Int((x / squareSize) - (numberOfTiles / 2), (y / squareSize) - (numberOfTiles / 2), 0), layerTile);
                 }
-
-                //Tile tile = GetTileForColor(mostCommonColor);  // You'll need to implement this function
-                //tilemap.SetTile(new Vector3Int(x / squareSize - numberOfTiles / 2, y / squareSize - numberOfTiles / 2, 0), tile);
             }
         }
-
     }
 
 
@@ -72,6 +74,6 @@ public class MaskToTile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
